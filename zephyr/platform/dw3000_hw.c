@@ -107,10 +107,11 @@ void dw3000_hw_interrupt_disable(void)
 	}
 }
 
-void dw3000_hw_fini(void)
+void dw3000_hw_uninit(void)
 {
 	// TODO
-	dw3000_spi_fini();
+	dw3000_spi_uninit();
+	LOG_WRN("dw3000_hw_uninit MOCKED");
 }
 
 void dw3000_hw_reset()

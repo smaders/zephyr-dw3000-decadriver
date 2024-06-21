@@ -4,7 +4,7 @@
 #include <stdint.h>
 
 int dw3000_spi_init(void);
-void dw3000_spi_fini(void);
+void dw3000_spi_uninit(void);
 void dw3000_spi_wakeup(void);
 void dw3000_spi_speed_slow(void);
 void dw3000_spi_speed_fast(void);

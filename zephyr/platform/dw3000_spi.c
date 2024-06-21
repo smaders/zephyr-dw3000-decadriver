@@ -80,9 +80,10 @@ void dw3000_spi_speed_fast(void)
 	spi_cfg = &spi_cfgs[1];
 }
 
-void dw3000_spi_fini(void)
+void dw3000_spi_uninit(void)
 {
 	// TODO
+	LOG_WRN("dw3000_spi_uninit MOCKED");
 }
 
 int dw3000_spi_write_crc(uint16_t headerLength, const uint8_t* headerBuffer,
