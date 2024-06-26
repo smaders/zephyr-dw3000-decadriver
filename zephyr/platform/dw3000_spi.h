@@ -17,4 +17,6 @@ int dw3000_spi_write_crc(uint16_t headerLength, const uint8_t* headerBuffer,
 						 uint8_t crc8);
 void dw3000_spi_cs_low(void);
 void dw3000_spi_cs_high(void);
+int dw3000_spi_open(void);
+int dw3000_spi_close(void);
 #endif

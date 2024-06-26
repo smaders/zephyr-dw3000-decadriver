@@ -8,6 +8,7 @@
 #include <zephyr/drivers/spi.h>
 #include <zephyr/logging/log.h>
 #include <zephyr/kernel.h>
+#include <zephyr/pm/device.h>
 
 #include "dw3000_spi.h"
 
@@ -214,4 +215,26 @@ void dw3000_spi_cs_high(void)
 #else
 	gpio_pin_set_dt(&cs_ctrl->gpio, 1);
 #endif
+}
+
+/**
+ * @brief Open SPI DW3000
+ * It will configure GPIO for SPI usage
+ * 
+ * @return 0 success, < 0 otherwise
+ */
+int dw3000_spi_open(void)
+{
+	return pm_device_action_run(spi, PM_DEVICE_ACTION_RESUME);
+}
+
+/**
+ * @brief Close SPI DW3000
+ * It will release GPIO and stop SPI usage
+ * 
+ * @return 0 success, < 0 otherwise
+ */
+int dw3000_spi_close(void)
+{
+	return pm_device_action_run(spi, PM_DEVICE_ACTION_SUSPEND);
 }
