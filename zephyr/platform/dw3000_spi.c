@@ -189,3 +189,29 @@ void dw3000_spi_wakeup()
 	gpio_pin_set_dt(&cs_ctrl->gpio, 1);
 #endif
 }
+
+/**
+ * @brief Set Low SPI CS for DW3000
+ * 
+ */
+void dw3000_spi_cs_low(void)
+{
+#if KERNEL_VERSION_MAJOR > 3 || (KERNEL_VERSION_MAJOR == 3 && KERNEL_VERSION_MINOR >= 4)
+	gpio_pin_set_dt(&cs_ctrl.gpio, 0);
+#else
+	gpio_pin_set_dt(&cs_ctrl->gpio, 0);
+#endif
+}
+
+/**
+ * @brief Set High SPI CS for DW3000
+ * 
+ */
+void dw3000_spi_cs_high(void)
+{
+#if KERNEL_VERSION_MAJOR > 3 || (KERNEL_VERSION_MAJOR == 3 && KERNEL_VERSION_MINOR >= 4)
+	gpio_pin_set_dt(&cs_ctrl.gpio, 1);
+#else
+	gpio_pin_set_dt(&cs_ctrl->gpio, 1);
+#endif
+}
