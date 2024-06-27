@@ -133,11 +133,11 @@ int dw3000_spi_write(uint16_t headerLength, const uint8_t* headerBuffer,
 	return spi_transceive(spi, spi_cfg, &tx, NULL);
 }
 
-int dw3000_spi_read(uint16_t headerLength, uint8_t* headerBuffer,
+int dw3000_spi_read(uint16_t headerLength, const uint8_t* headerBuffer,
 					uint16_t readLength, uint8_t* readBuffer)
 {
 	const struct spi_buf tx_buf = {
-		.buf = headerBuffer,
+		.buf = (void*) headerBuffer,
 		.len = headerLength,
 	};
 	const struct spi_buf_set tx = {

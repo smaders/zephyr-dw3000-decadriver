@@ -415,7 +415,7 @@ struct dwt_spi_s
     * output parameters:
     * returns DWT_SUCCESS for success, or DWT_ERROR for error
     */
-    int (*readfromspi)(uint16_t headerLength, /*const*/ uint8_t *headerBuffer, uint16_t readlength, uint8_t *readBuffer);
+    int (*readfromspi)(uint16_t headerLength, const uint8_t *headerBuffer, uint16_t readlength, uint8_t *readBuffer);
 
 /*! ------------------------------------------------------------------------------------------------------------------
     * @brief writetospi
