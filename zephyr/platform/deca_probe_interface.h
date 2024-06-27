@@ -15,6 +15,6 @@
 
 #include "deca_device_api.h"
 
-extern const struct dwt_probe_s dw3000_probe_interf;
+extern struct dwt_probe_s dw3000_probe_interf;
 
 #endif
