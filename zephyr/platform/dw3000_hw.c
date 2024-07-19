@@ -13,6 +13,7 @@ LOG_MODULE_REGISTER(dw3000, CONFIG_DW3000_LOG_LEVEL);
 
 static struct gpio_callback gpio_cb;
 static struct k_work dw3000_isr_work;
+static dw3000_isr_cb _dw3000_isr_cb = NULL;
 
 struct dw3000_config {
 	struct gpio_dt_spec gpio_irq;
@@ -29,6 +30,13 @@ static const struct dw3000_config conf = {
 	.gpio_spi_pol = GPIO_DT_SPEC_GET_OR(DW_INST, spi_pol_gpios, {0}),
 	.gpio_spi_pha = GPIO_DT_SPEC_GET_OR(DW_INST, spi_pha_gpios, {0}),
 };
+
+static void _dw3000_isr_cb_default(void)
+{
+	if(_dw3000_isr_cb) {
+		_dw3000_isr_cb();
+	}
+}
 
 int dw3000_hw_init()
 {
@@ -59,6 +67,8 @@ int dw3000_hw_init()
 		LOG_INF("SPI_PHA on %s pin %d", conf.gpio_spi_pha.port->name,
 				conf.gpio_spi_pha.pin);
 	}
+
+	_dw3000_isr_cb = _dw3000_isr_cb_default;
 
 	return dw3000_spi_init();
 }
@@ -107,10 +117,11 @@ void dw3000_hw_interrupt_disable(void)
 	}
 }
 
-void dw3000_hw_fini(void)
+void dw3000_hw_uninit(void)
 {
 	// TODO
-	dw3000_spi_fini();
+	dw3000_spi_uninit();
+	LOG_WRN("dw3000_hw_uninit MOCKED");
 }
 
 void dw3000_hw_reset()
@@ -149,4 +160,30 @@ void dw3000_hw_wakeup_pin_low(void)
 	if (conf.gpio_wakeup.port) {
 		gpio_pin_set_dt(&conf.gpio_wakeup, 0);
 	}
+}
+
+/**
+ * @brief Set ISR Callback
+ * 
+ * @param isr_cb ISR callback
+ */
+void dw3000_hw_isr_set_cb(dw3000_isr_cb isr_cb)
+{
+	_dw3000_isr_cb = isr_cb;
+	LOG_DBG("Set new isr cb to %08X", (uint32_t) isr_cb);
+}
+
+/**
+ * @brief Check if the IRQ line is rised
+ * @details It will read the state of the IRQ line (from gpio)
+ * 
+ * @return true The IRQ line is rised
+ * @return false The IRQ line is not rised
+ */
+bool dw3000_hw_isr_is_rised(void)
+{
+	int value = gpio_pin_get_dt(&conf.gpio_irq);
+	value = (value < 0) ? 0 : value;
+
+	return (value > 0);
 }

@@ -37,7 +37,7 @@ static const struct dwt_spi_s dw3000_spi_fct = {
 	.setfastrate = dw3000_spi_speed_fast,
 };
 
-const struct dwt_probe_s dw3000_probe_interf = {
+struct dwt_probe_s dw3000_probe_interf = {
 	.dw = NULL,
 	.spi = (void*)&dw3000_spi_fct,
 	.wakeup_device_with_io = dw3000_hw_wakeup,

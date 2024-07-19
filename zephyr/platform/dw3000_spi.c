@@ -8,6 +8,7 @@
 #include <zephyr/drivers/spi.h>
 #include <zephyr/logging/log.h>
 #include <zephyr/kernel.h>
+#include <zephyr/pm/device.h>
 
 #include "dw3000_spi.h"
 
@@ -80,9 +81,10 @@ void dw3000_spi_speed_fast(void)
 	spi_cfg = &spi_cfgs[1];
 }
 
-void dw3000_spi_fini(void)
+void dw3000_spi_uninit(void)
 {
 	// TODO
+	LOG_WRN("dw3000_spi_uninit MOCKED");
 }
 
 int dw3000_spi_write_crc(uint16_t headerLength, const uint8_t* headerBuffer,
@@ -132,11 +134,11 @@ int dw3000_spi_write(uint16_t headerLength, const uint8_t* headerBuffer,
 	return spi_transceive(spi, spi_cfg, &tx, NULL);
 }
 
-int dw3000_spi_read(uint16_t headerLength, uint8_t* headerBuffer,
+int dw3000_spi_read(uint16_t headerLength, const uint8_t* headerBuffer,
 					uint16_t readLength, uint8_t* readBuffer)
 {
 	const struct spi_buf tx_buf = {
-		.buf = headerBuffer,
+		.buf = (void*) headerBuffer,
 		.len = headerLength,
 	};
 	const struct spi_buf_set tx = {
@@ -188,4 +190,52 @@ void dw3000_spi_wakeup()
 	k_sleep(K_USEC(500));
 	gpio_pin_set_dt(&cs_ctrl->gpio, 1);
 #endif
+}
+
+/**
+ * @brief Set Low SPI CS for DW3000
+ * 
+ */
+void dw3000_spi_cs_low(void)
+{
+#if KERNEL_VERSION_MAJOR > 3 || (KERNEL_VERSION_MAJOR == 3 && KERNEL_VERSION_MINOR >= 4)
+	gpio_pin_set_dt(&cs_ctrl.gpio, 0);
+#else
+	gpio_pin_set_dt(&cs_ctrl->gpio, 0);
+#endif
+}
+
+/**
+ * @brief Set High SPI CS for DW3000
+ * 
+ */
+void dw3000_spi_cs_high(void)
+{
+#if KERNEL_VERSION_MAJOR > 3 || (KERNEL_VERSION_MAJOR == 3 && KERNEL_VERSION_MINOR >= 4)
+	gpio_pin_set_dt(&cs_ctrl.gpio, 1);
+#else
+	gpio_pin_set_dt(&cs_ctrl->gpio, 1);
+#endif
+}
+
+/**
+ * @brief Open SPI DW3000
+ * It will configure GPIO for SPI usage
+ * 
+ * @return 0 success, < 0 otherwise
+ */
+int dw3000_spi_open(void)
+{
+	return pm_device_action_run(spi, PM_DEVICE_ACTION_RESUME);
+}
+
+/**
+ * @brief Close SPI DW3000
+ * It will release GPIO and stop SPI usage
+ * 
+ * @return 0 success, < 0 otherwise
+ */
+int dw3000_spi_close(void)
+{
+	return pm_device_action_run(spi, PM_DEVICE_ACTION_SUSPEND);
 }
