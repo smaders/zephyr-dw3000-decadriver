@@ -9,14 +9,17 @@
 
 decaIrqStatus_t decamutexon(void)
 {
+	bool status = dw3000_hw_isr_is_rised();
 	dw3000_hw_interrupt_disable();
-	return 1;
+	return (decaIrqStatus_t)status;
 }
 
 void decamutexoff(decaIrqStatus_t s)
 {
-	// TODO?: s is not used
-	dw3000_hw_interrupt_enable();
+	if(s)
+	{
+		dw3000_hw_interrupt_enable();
+	}
 }
 
 void deca_sleep(unsigned int time_ms)
