@@ -1,6 +1,8 @@
 #ifndef DW3000_HW_H
 #define DW3000_HW_H
 
+#include <stdbool.h>
+
 typedef void (* dw3000_isr_cb)(void);
 
 int dw3000_hw_init(void);

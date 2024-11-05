@@ -103,6 +103,15 @@ int dw3000_hw_init_interrupt(void)
 	}
 }
 
+///@brief Get status of IRQ pin
+decaIrqStatus_t dw3000_hw_interrupt_get_status(void)
+{
+    if (conf.gpio_irq.port) {
+        return (decaIrqStatus_t)gpio_pin_get_dt(&conf.gpio_irq);
+    }
+	return 0;
+}
+
 void dw3000_hw_interrupt_enable(void)
 {
 	if (conf.gpio_irq.port) {
